@@ -1,96 +1,167 @@
-# Ciphantom version 1.0
-> Reveal your digital shadow before someone else does.
+# Ciphantom 
 
+> **Reveal your digital shadow before someone else does.**
 
+Ciphantom is an OSINT-based digital footprint awareness tool that explores how publicly available information can be used to build an individual's digital identity profile — and how seemingly disconnected online traces can create privacy and social-engineering risks.
 
+Version 2 introduces **local AI-powered report interpretation using Gemma 4**, making the analysis more informative while keeping risk scoring deterministic and transparent.
 
-<img width="1315" height="908" alt="Screenshot 2026-08-15 222338" src="https://github.com/user-attachments/assets/ffc264a9-d0ec-4f25-a48a-dfb858790562" />
+## Overview
 
+People often leave behind fragments of information across public platforms. Individually, these fragments may seem harmless. When correlated, they can reveal patterns about an individual's online presence, interests, and digital identity.
 
-
-
-Ciphantom is an OSINT-based digital footprint awareness tool
-that demonstrates what publicly available information can reveal
-about an individual and how those fragments could be used in
-social engineering.
+Ciphantom demonstrates this exposure through a structured investigation workflow, helping users understand their digital footprint and take steps to protect their privacy.
 
 ## Features
 
-- GitHub OSINT
-- Username correlation
-- Public profile evidence
-- Exposure/risk scoring
-- Digital footprint analysis
-- Social engineering simulation
-- Defensive recommendations
+### OSINT & Digital Footprint Analysis
 
-## Tech Stack
+- GitHub public-profile investigation.
+    
+- Username and identity correlation.
+    
+- Extraction of publicly available profile evidence.
+    
+- Analysis of potential digital footprint exposure.
+    
+- Identification of findings and uncertainties.
+    
 
-### Frontend
-- React
-- Vite
-- CSS
+### Risk Assessment
 
-### Backend
-- Node.js
-- Express
-- GitHub REST API
+- Rule-based exposure and risk scoring.
+    
+- Risk-level classification.
+    
+- Evidence-driven observations.
+    
+- Transparent separation between collected findings and calculated risk.
+    
 
-## Getting Started
+### Local AI Analysis — Gemma 4
 
-### Prerequisites
+- Uses the open-weight **Gemma 4 e2b** model through Ollama.
+    
+- Generates a natural-language interpretation of investigation results.
+    
+- Highlights important findings and potential privacy implications.
+    
+- Provides defensive recommendations.
+    
+- Explains limitations and uncertainties in the collected data.
+    
 
-- Node.js
-- npm
-- Git
+**AI is used for interpretation, not risk calculation.** The risk score is generated independently by the deterministic assessment engine.
 
-### 1. Clone
+### Social Engineering Simulation
 
-git clone https://github.com/Valkyrie247/Ciphantom.git
-cd Ciphantom
-
-### 2. Start the backend
-
-cd backend
-npm install
-node server.js
-
-Backend runs on:
-http://localhost:5000
-
-### 3. Start the frontend
-
-Open another terminal:
-
-cd frontend
-npm install
-npm run dev
-
-Frontend runs on:
-http://localhost:5173
+- Demonstrates how publicly exposed information could contribute to targeted social-engineering scenarios.
+    
+- Provides simulated attack scenarios for educational awareness.
+    
+- Does not send phishing emails or interact with real accounts.
+    
 
 ## How It Works
 
-User Input
-↓
-OSINT Collection
-↓
-Evidence Extraction
-↓
-Identity Correlation
-↓
-Risk Analysis
-↓
-Social Engineering Simulation
-↓
-Defensive Recommendations
+```
+       USER INPUT
+            |
+            v
+     OSINT COLLECTION
+            |
+            v
+    EVIDENCE EXTRACTION
+            |
+            v
+   IDENTITY CORRELATION
+            |
+            v
+     RISK ASSESSMENT
+            |
+       +----+----+
+       |         |
+       v         v
+  RISK REPORT  GEMMA 4
+               AI ANALYSIS
+       |         |
+       +----+----+
+            |
+            v
+   PRIVACY RECOMMENDATIONS
+            |
+            v
+  SOCIAL ENGINEERING SIMULATION
+```
+
+## Technology Stack
+
+### Frontend
+
+- React
+    
+- Vite
+    
+- JavaScript
+    
+- CSS
+    
+- Lucide React
+    
+
+### Backend
+
+- Node.js
+    
+- Express
+    
+- GitHub REST API
+    
+
+### AI Integration
+
+- Gemma 4 e2b
+    
+- Ollama
+    
+- Local inference through the Ollama API
+    
+
+## Architecture
+
+Ciphantom separates its investigation pipeline into distinct responsibilities:
+
+|Component|Responsibility|
+|---|---|
+|OSINT Collector|Retrieves publicly available information|
+|Identity Correlation|Examines relationships between discovered identifiers|
+|Risk Engine|Calculates the exposure score using deterministic rules|
+|AI Analysis|Interprets findings and generates recommendations|
+|Report Generator|Presents the investigation results|
+|Simulation Module|Demonstrates potential social-engineering scenarios|
+
+This separation ensures that AI-generated text does not alter the underlying risk assessment.
+
+
+## Responsible Use & Limitations
+
+Ciphantom is designed for educational, defensive, and privacy-awareness purposes.
+
+- Investigations are limited to publicly accessible information and supported integrations.
+    
+- Unavailable or unverifiable platform information must not be treated as confirmed evidence.
+    
+- Ciphantom does not bypass authentication, access private accounts, or compromise systems.
+    
+- Social-engineering scenarios are simulations only.
+    
+- AI-generated interpretations may contain inaccuracies and should be evaluated against the underlying evidence.
+    
 
 ## Disclaimer
 
-Ciphantom is an educational digital-privacy awareness
-and OSINT research project.
+Ciphantom is an educational OSINT and digital-privacy awareness project. It is not intended for stalking, harassment, unauthorized profiling, or malicious social engineering.
 
-It does not send phishing emails or attempt to compromise
-accounts.
+The tool does not send phishing emails, attempt account compromise, or access private information.
 
-All social-engineering scenarios are simulated.
+**Understand your exposure. Protect your digital identity.**
