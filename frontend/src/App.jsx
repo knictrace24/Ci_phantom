@@ -27,7 +27,6 @@ function Navbar() {
 function Hero() {
   return (
     <section className="hero">
-
       <p className="heroTag">
         CASE #4769 · DIGITAL FOOTPRINT AUDIT
       </p>
@@ -49,7 +48,6 @@ function Hero() {
         Give me a handle and I'll show you what
         a stranger could piece together about you.
       </p>
-
     </section>
   );
 }
@@ -59,7 +57,6 @@ function Hero() {
 // =========================
 
 function CaseFile({ setRisk, setPage, setTarget }) {
-
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -78,7 +75,6 @@ function CaseFile({ setRisk, setPage, setTarget }) {
   }
 
   function validateUsername(username) {
-
     const value = username.trim().replace(/^@/, "");
 
     if (!value) {
@@ -97,7 +93,6 @@ function CaseFile({ setRisk, setPage, setTarget }) {
   }
 
   function validateEmail(email) {
-
     const value = email.trim();
 
     if (!value) {
@@ -112,22 +107,19 @@ function CaseFile({ setRisk, setPage, setTarget }) {
   }
 
   function validateForm() {
-
     const newErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     }
 
-    const usernameError =
-      validateUsername(formData.username);
+    const usernameError = validateUsername(formData.username);
 
     if (usernameError) {
       newErrors.username = usernameError;
     }
 
-    const emailError =
-      validateEmail(formData.email);
+    const emailError = validateEmail(formData.email);
 
     if (emailError) {
       newErrors.email = emailError;
@@ -139,7 +131,6 @@ function CaseFile({ setRisk, setPage, setTarget }) {
   }
 
   async function handleInvestigation() {
-
     if (!validateForm()) {
       return;
     }
@@ -147,16 +138,13 @@ function CaseFile({ setRisk, setPage, setTarget }) {
     setLoading(true);
 
     try {
-
       const response = await fetch(
-        "http://localhost:5000/investigate",
+  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/investigate`,
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json"
           },
-
           body: JSON.stringify(formData)
         }
       );
@@ -171,37 +159,25 @@ function CaseFile({ setRisk, setPage, setTarget }) {
 
       // Keep the original input for the simulation page.
       setTarget(formData);
-
       setRisk(result);
-
       setPage("report");
-
     } catch (error) {
-
       console.error("Investigation failed:", error);
 
       setErrors({
         backend:
           "Could not connect to Ciphantom backend."
       });
-
     } finally {
-
       setLoading(false);
-
     }
   }
 
   return (
-
     <div className="panel">
-
       <div className="panelHeader">
-
         <h3>CASE FILE</h3>
-
         <span>#4769</span>
-
       </div>
 
       <label>Name</label>
@@ -274,7 +250,6 @@ function CaseFile({ setRisk, setPage, setTarget }) {
           ? "Investigating..."
           : "Begin Investigation"}
       </button>
-
     </div>
   );
 }
@@ -284,13 +259,9 @@ function CaseFile({ setRisk, setPage, setTarget }) {
 // =========================
 
 function Observation({ observation }) {
-
   return (
-
     <div className="observations">
-
       <div className="findingHeader">
-
         <span>
           {observation.title}
         </span>
@@ -300,62 +271,103 @@ function Observation({ observation }) {
             +{observation.points}
           </small>
         )}
-
       </div>
-
     </div>
   );
 }
 
 // =========================
-// RECOMMENDATIONS
+// GEMMA RECOMMENDATIONS
 // =========================
 
-function Recommendations() {
-
+function Recommendations({ analysis }) {
   return (
-
     <div className="findings">
-
       <h4>RECOMMENDED ACTIONS</h4>
 
       <div className="recommendationList">
-
-        <div>
-          <span>01</span>
-          <p>
-            Review personal information exposed through
-            public profiles.
-          </p>
-        </div>
-
-        <div>
-          <span>02</span>
-          <p>
-            Avoid reusing the same identity across
-            unrelated platforms.
-          </p>
-        </div>
-
-        <div>
-          <span>03</span>
-          <p>
-            Remove unnecessary personal information
-            from publicly accessible profiles.
-          </p>
-        </div>
-
-        <div>
-          <span>04</span>
-          <p>
-            Treat unexpected messages containing
-            personal information with caution.
-          </p>
-        </div>
-
+        {analysis?.available &&
+        analysis.recommendations?.length > 0 ? (
+          analysis.recommendations.map((recommendation, index) => (
+            <div key={index}>
+              <span>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <p>{recommendation}</p>
+            </div>
+          ))
+        ) : (
+          <div>
+            <span>!</span>
+            <p>
+              {analysis?.message ||
+                "AI recommendations are unavailable for this investigation."}
+            </p>
+          </div>
+        )}
       </div>
-
     </div>
+  );
+}
+
+// =========================
+// GEMMA INVESTIGATION SUMMARY
+// =========================
+
+function AIReportSummary({ analysis }) {
+  if (!analysis?.available) {
+    return null;
+  }
+
+  return (
+    <>
+      {analysis.summary && (
+        <div className="findings">
+          <h4>GEMMA // INVESTIGATION SUMMARY</h4>
+          <p>{analysis.summary}</p>
+        </div>
+      )}
+
+      {analysis.keyInsights?.length > 0 && (
+        <div className="findings">
+          <h4>KEY INSIGHTS</h4>
+
+          <div className="recommendationList">
+            {analysis.keyInsights.map((insight, index) => (
+              <div key={index}>
+                <span>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p>{insight}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {analysis.limitations?.length > 0 && (
+        <div className="findings">
+          <h4>AI ANALYSIS LIMITATIONS</h4>
+
+          <div className="recommendationList">
+            {analysis.limitations.map((limitation, index) => (
+              <div key={index}>
+                <span>○</span>
+                <p>{limitation}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="aiDisclaimer">
+        LOCAL INFERENCE // OLLAMA // GEMMA
+        <br />
+        AI-generated interpretation of collected evidence.
+        The exposure score is calculated independently by
+        Ciphantom's risk engine.
+      </p>
+    </>
   );
 }
 
@@ -364,17 +376,11 @@ function Recommendations() {
 // =========================
 
 function RiskReport({ risk, setPage }) {
-
   if (!risk) {
-
     return (
-
       <div className="panel riskPanel">
-
         <div className="panelHeader">
-
           <h3>⚠ RISK REPORT</h3>
-
         </div>
 
         <p className="reportText">
@@ -384,46 +390,32 @@ function RiskReport({ risk, setPage }) {
         </p>
 
         <div className="riskTags">
-
           <span>✓ VERIFIED PUBLIC INFO</span>
-
           <span>⚠ HIGH EXPOSURE</span>
-
           <span>◎ RELATIONSHIP / LINK</span>
-
           <span>○ NEEDS ATTENTION</span>
-
         </div>
-
       </div>
     );
   }
 
   return (
-
     <div className="panel riskPanel">
-
       <div className="panelHeader">
-
         <h3>⚠ RISK REPORT</h3>
-
         <span>CASE #4769</span>
-
       </div>
 
       {/* SCORE */}
 
       <div className="scoreSection">
-
         <div>
-
           <p>EXPOSURE SCORE</p>
 
           <strong>
             {risk.score}
             <small>/100</small>
           </strong>
-
         </div>
 
         <span
@@ -431,62 +423,46 @@ function RiskReport({ risk, setPage }) {
         >
           {risk.level}
         </span>
-
       </div>
 
       {/* OBSERVATIONS */}
 
       <div className="findings">
-
         <h4>KEY OBSERVATIONS</h4>
 
         <div className="observationList">
-
           {risk.observations?.length > 0 ? (
-
-            risk.observations.map(
-              (observation, index) => (
-
-                <Observation
-                  observation={observation}
-                  key={index}
-                />
-
-              )
-            )
-
+            risk.observations.map((observation, index) => (
+              <Observation
+                observation={observation}
+                key={index}
+              />
+            ))
           ) : (
-
             <div className="observations">
-
               <div className="findingHeader">
-
                 <span>
                   NO CONFIRMED EXPOSURE
                 </span>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </div>
 
-      {/* RECOMMENDATIONS */}
+      {/* GEMMA SUMMARY AND INSIGHTS */}
 
-      <Recommendations />
+      <AIReportSummary analysis={risk.aiAnalysis} />
+
+      {/* GEMMA RECOMMENDATIONS */}
+
+      <Recommendations analysis={risk.aiAnalysis} />
 
       {/* SIMULATION */}
 
       {risk.phishingSimulation?.applicable && (
-
         <div className="simulationPrompt">
-
           <div>
-
             <h4>
               SOCIAL ENGINEERING SIMULATION
             </h4>
@@ -496,7 +472,6 @@ function RiskReport({ risk, setPage }) {
               this investigation could be combined into
               a convincing social-engineering message.
             </p>
-
           </div>
 
           <button
@@ -505,33 +480,22 @@ function RiskReport({ risk, setPage }) {
           >
             VIEW SIMULATED ATTACK →
           </button>
-
         </div>
-
       )}
 
       {/* UNCERTAINTIES */}
 
       {risk.uncertainties?.length > 0 && (
-
         <div className="uncertaintyBox">
-
           <h4>UNCERTAIN SOURCES</h4>
 
-          {risk.uncertainties.map(
-            (uncertainty, index) => (
-
-              <p key={index}>
-                ○ {uncertainty}
-              </p>
-
-            )
-          )}
-
+          {risk.uncertainties.map((uncertainty, index) => (
+            <p key={index}>
+              ○ {uncertainty}
+            </p>
+          ))}
         </div>
-
       )}
-
     </div>
   );
 }
@@ -541,7 +505,6 @@ function RiskReport({ risk, setPage }) {
 // =========================
 
 const emailTemplates = [
-
   {
     subject: "Security verification required",
     sender: "Account Security",
@@ -553,7 +516,6 @@ const emailTemplates = [
       "Security Operations"
     ]
   },
-
   {
     subject: "Action required: account review",
     sender: "Support Team",
@@ -565,7 +527,6 @@ const emailTemplates = [
       "Support Team"
     ]
   },
-
   {
     subject: "Important notification regarding your account",
     sender: "Account Services",
@@ -577,7 +538,6 @@ const emailTemplates = [
       "Account Services"
     ]
   }
-
 ];
 
 // =========================
@@ -585,48 +545,31 @@ const emailTemplates = [
 // =========================
 
 function EmailHeader({ target, email }) {
-
   return (
-
     <div className="emailHeader">
-
       <div className="emailRow">
-
         <span>From</span>
-
         <strong>
           {email.sender}
         </strong>
-
       </div>
 
       <div className="emailRow">
-
         <span>To</span>
-
         <strong>
           {target?.email || "No email supplied"}
         </strong>
-
       </div>
 
       <div className="emailRow">
-
         <span>Subject</span>
-
         <strong>
           {email.subject}
         </strong>
-
       </div>
-
     </div>
   );
 }
-
-// =========================
-// ATTACK SIMULATION
-// =========================
 
 // =========================
 // ATTACK SIMULATION
@@ -638,7 +581,6 @@ function SimulationPage({ risk, setPage }) {
   if (!simulation?.applicable) {
     return (
       <div className="simulationPage">
-
         <button
           className="backButton"
           onClick={() => setPage("report")}
@@ -650,7 +592,6 @@ function SimulationPage({ risk, setPage }) {
           No social-engineering simulation is available
           for the current investigation.
         </div>
-
       </div>
     );
   }
@@ -668,8 +609,9 @@ function SimulationPage({ risk, setPage }) {
 
   const suppliedUsername =
     risk?.identifierAnalysis?.find(
-      item => item.platform === "GitHub" &&
-             item.status === "FOUND"
+      item =>
+        item.platform === "GitHub" &&
+        item.status === "FOUND"
     )?.identifier || "";
 
   const suppliedEmail =
@@ -687,12 +629,6 @@ function SimulationPage({ risk, setPage }) {
         item.category === "display_name"
     )?.value || "";
 
-  /*
-   * Use the backend-generated email.
-   * This means the subject, sender and recipient
-   * all stay tied to the actual investigation.
-   */
-
   const emailSubject =
     email.subject ||
     `Security notification for GitHub account "${suppliedUsername}"`;
@@ -702,29 +638,32 @@ function SimulationPage({ risk, setPage }) {
     "GitHub Security <notifications@github.com>";
 
   /*
-   * Dynamic danger explanation based on
-   * information actually discovered.
+   * Gemma's privacy implications explain why
+   * the discovered information could be dangerous.
+   * Fall back to the general explanation if AI is unavailable.
    */
 
-  const dangerExplanation = [
+  const dangerExplanation =
+    risk?.aiAnalysis?.available &&
+    risk.aiAnalysis.privacyImplications?.length > 0
+      ? risk.aiAnalysis.privacyImplications
+      : [
+          "This is a phishing simulation. The attacker is pretending to be GitHub so that the recipient is more likely to trust the message.",
 
-    `This is a phishing simulation. The attacker is pretending to be GitHub so that the recipient is more likely to trust the message.`,
+          suppliedUsername
+            ? `The message uses the real username "${suppliedUsername}" discovered during the investigation. Familiar information can make a fake message feel legitimate.`
+            : "The message uses information discovered during the investigation to make the communication appear more believable.",
 
-    suppliedUsername
-      ? `The message uses the real username "${suppliedUsername}" discovered during the investigation. Familiar information can make a fake message feel legitimate.`
-      : `The message uses information discovered during the investigation to make the communication appear more believable.`,
+          displayName
+            ? `The investigation also found the public display name "${displayName}", which could be used to make the message feel more personally targeted.`
+            : null,
 
-    displayName
-      ? `The investigation also found the public display name "${displayName}", which could be used to make the message feel more personally targeted.`
-      : null,
+          "The dangerous part is the link. A site reached through the message could redirect the recipient to a fake website that looks like the real service.",
 
-    `The dangerous part is the link. A site reached through the message could redirect the recipient to a fake website that looks like the real service.`,
+          "If the victim enters their password or other information on that fake page, the attacker could receive it. The attacker is trying to trick the person into giving away access rather than breaking into the account directly.",
 
-    `If the victim enters their password or other information on that fake page, the attacker could receive it. In simple terms, the attacker is trying to trick the person into giving away access rather than breaking into the account directly.`,
-
-    `This demonstrates why several small pieces of public information can become useful when combined into a believable social-engineering message.`
-  ].filter(Boolean);
-
+          "This demonstrates why several small pieces of public information can become useful when combined into a believable social-engineering message."
+        ].filter(Boolean);
 
   /*
    * Information actually used in the simulation.
@@ -737,33 +676,21 @@ function SimulationPage({ risk, setPage }) {
           "No specific public information was available for this simulation."
         ];
 
-
   /*
    * Dynamic precautions.
-   * These are intentionally selected differently
-   * for each generated simulation.
+   * These remain part of the simulation page.
    */
 
   const defensePool = [
-
     "Open GitHub directly through your browser instead of using a link in an unexpected email.",
-
     "Check the actual destination of a link before opening it.",
-
     "Never enter your password on a page reached through an unexpected message.",
-
     "Enable two-factor authentication to add another layer of protection.",
-
     "Prefer passkeys or security keys where available because they are more resistant to phishing.",
-
     "If a message creates urgency, pause and verify the request independently.",
-
     "Check your GitHub security and notification settings directly.",
-
     "Do not assume an email is legitimate just because it contains your real username.",
-
     "Check the sender's actual email domain rather than trusting the displayed sender name.",
-
     "Report suspicious messages instead of interacting with their links."
   ];
 
@@ -781,11 +708,8 @@ function SimulationPage({ risk, setPage }) {
     ...defensePool.slice(0, defenseStart)
   ].slice(0, 4);
 
-
   return (
-
     <div className="simulationPage">
-
       {/* BACK */}
 
       <button
@@ -795,11 +719,9 @@ function SimulationPage({ risk, setPage }) {
         ← BACK TO RISK REPORT
       </button>
 
-
       {/* TITLE */}
 
       <div className="simulationTitle">
-
         <p>
           CASE #4769 · SOCIAL ENGINEERING ANALYSIS
         </p>
@@ -811,20 +733,12 @@ function SimulationPage({ risk, setPage }) {
         <div className="simulationWarning">
           ⚠ EDUCATIONAL SIMULATION · THIS EMAIL WAS NOT SENT
         </div>
-
       </div>
 
-
-      {/* =========================
-          GMAIL STYLE EMAIL
-      ========================= */}
+      {/* GMAIL STYLE EMAIL */}
 
       <div className="gmailWindow">
-
-        {/* TOP BAR */}
-
         <div className="gmailTopBar">
-
           <div className="gmailBrand">
             <span className="gmailLogo">M</span>
             <span>Mail</span>
@@ -834,31 +748,19 @@ function SimulationPage({ risk, setPage }) {
             <span>□</span>
             <span>⋮</span>
           </div>
-
         </div>
 
-
-        {/* EMAIL */}
-
         <div className="gmailContent">
-
-          {/* SUBJECT */}
-
           <h2 className="gmailSubject">
             {emailSubject}
           </h2>
 
-
-          {/* SENDER */}
-
           <div className="gmailSender">
-
             <div className="senderAvatar">
               G
             </div>
 
             <div className="senderInfo">
-
               <div className="senderName">
                 GitHub Security
               </div>
@@ -866,20 +768,14 @@ function SimulationPage({ risk, setPage }) {
               <div className="senderAddress">
                 &lt;notifications@github.com&gt;
               </div>
-
             </div>
 
             <div className="emailTime">
               now
             </div>
-
           </div>
 
-
-          {/* RECIPIENT */}
-
           <div className="gmailRecipient">
-
             <span>to</span>
 
             <strong>
@@ -887,14 +783,9 @@ function SimulationPage({ risk, setPage }) {
             </strong>
 
             <span>⌄</span>
-
           </div>
 
-
-          {/* BODY */}
-
           <div className="gmailBody">
-
             <p>
               Hi{" "}
               <strong>
@@ -902,12 +793,10 @@ function SimulationPage({ risk, setPage }) {
               </strong>,
             </p>
 
-
             <p>
               Your GitHub account has been flagged for
               a security review.
             </p>
-
 
             <p>
               We detected activity associated with your
@@ -916,13 +805,8 @@ function SimulationPage({ risk, setPage }) {
               that your account activity is expected.
             </p>
 
-
-            {/* ACCOUNT INFORMATION */}
-
             <div className="accountBox">
-
               <div>
-
                 <span>
                   ACCOUNT
                 </span>
@@ -930,12 +814,9 @@ function SimulationPage({ risk, setPage }) {
                 <strong>
                   {suppliedUsername || "Not available"}
                 </strong>
-
               </div>
 
-
               <div>
-
                 <span>
                   PROFILE
                 </span>
@@ -943,14 +824,10 @@ function SimulationPage({ risk, setPage }) {
                 <strong>
                   github.com/{suppliedUsername || "account"}
                 </strong>
-
               </div>
 
-
               {displayName && (
-
                 <div>
-
                   <span>
                     PROFILE NAME
                   </span>
@@ -958,21 +835,14 @@ function SimulationPage({ risk, setPage }) {
                   <strong>
                     {displayName}
                   </strong>
-
                 </div>
-
               )}
-
             </div>
-
 
             <p>
               Please review your account status to make
               sure your access remains uninterrupted.
             </p>
-
-
-            {/* SIMULATED LINK */}
 
             <button
               className="fakeEmailButton"
@@ -981,7 +851,6 @@ function SimulationPage({ risk, setPage }) {
               REVIEW ACCOUNT STATUS
             </button>
 
-
             <p>
               If you did not expect this message, do not
               use the link above. Instead, open GitHub
@@ -989,114 +858,71 @@ function SimulationPage({ risk, setPage }) {
               your account there.
             </p>
 
-
             <p className="emailSignature">
               GitHub Security
               <br />
               GitHub, Inc.
             </p>
-
           </div>
-
         </div>
-
       </div>
 
-
-      {/* =========================
-          WHY DANGEROUS
-      ========================= */}
+      {/* WHY DANGEROUS */}
 
       <div className="simulationSection">
-
         <div className="simulationCard dangerExplanation">
-
           <h3>
             WHY THIS COULD BE DANGEROUS
           </h3>
 
-          {dangerExplanation.map(
-            (paragraph, index) => (
-
-              <p key={index}>
-                {paragraph}
-              </p>
-
-            )
-          )}
-
+          {dangerExplanation.map((paragraph, index) => (
+            <p key={index}>
+              {paragraph}
+            </p>
+          ))}
         </div>
 
-
-        {/* =========================
-            INFORMATION USED
-        ========================= */}
+        {/* INFORMATION USED */}
 
         <div className="simulationCard">
-
           <h3>
             INFORMATION USED
           </h3>
 
           <ul>
-
-            {informationUsed.map(
-              (item, index) => (
-
-                <li key={index}>
-                  {item}
-                </li>
-
-              )
-            )}
-
+            {informationUsed.map((item, index) => (
+              <li key={index}>
+                {item}
+              </li>
+            ))}
           </ul>
-
         </div>
-
       </div>
 
-
-      {/* =========================
-          DEFENSE
-      ========================= */}
+      {/* DEFENSE */}
 
       <div className="defenseCard">
-
         <h3>
           HOW TO DEFEND
         </h3>
 
         <ul>
-
-          {defenses.map(
-            (defense, index) => (
-
-              <li key={index}>
-                {defense}
-              </li>
-
-            )
-          )}
-
+          {defenses.map((defense, index) => (
+            <li key={index}>
+              {defense}
+            </li>
+          ))}
         </ul>
-
       </div>
 
-
-      {/* =========================
-          DISCLAIMER
-      ========================= */}
+      {/* DISCLAIMER */}
 
       <div className="simulationDisclaimer">
-
         This message was generated by Ciphantom using
         information from the current investigation.
         It is a simulated example of social engineering
         and was not delivered to the target.
-
       </div>
-
     </div>
   );
 }
@@ -1106,14 +932,11 @@ function SimulationPage({ risk, setPage }) {
 // =========================
 
 function Footer() {
-
   return (
-
     <footer>
       DISCLAIMER • For personal digital-privacy
       awareness only.
     </footer>
-
   );
 }
 
@@ -1122,11 +945,8 @@ function Footer() {
 // =========================
 
 export default function App() {
-
   const [risk, setRisk] = useState(null);
-
   const [target, setTarget] = useState(null);
-
   const [page, setPage] = useState("home");
 
   // =========================
@@ -1134,11 +954,8 @@ export default function App() {
   // =========================
 
   if (page === "simulation") {
-
     return (
-
       <div className="app">
-
         <div className="background"></div>
 
         <Navbar />
@@ -1150,9 +967,7 @@ export default function App() {
         />
 
         <Footer />
-
       </div>
-
     );
   }
 
@@ -1161,9 +976,7 @@ export default function App() {
   // =========================
 
   return (
-
     <div className="app">
-
       <div className="background"></div>
 
       <Navbar />
@@ -1171,7 +984,6 @@ export default function App() {
       <Hero />
 
       <main className="dashboard">
-
         <CaseFile
           setRisk={setRisk}
           setPage={setPage}
@@ -1182,12 +994,9 @@ export default function App() {
           risk={risk}
           setPage={setPage}
         />
-
       </main>
 
       <Footer />
-
     </div>
-
   );
 }
