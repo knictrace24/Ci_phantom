@@ -12,6 +12,11 @@ People often leave behind fragments of information across public platforms. Indi
 
 Ciphantom demonstrates this exposure through a structured investigation workflow, helping users understand their digital footprint and take steps to protect their privacy.
 
+
+
+<img width="1176" height="852" alt="image" src="https://github.com/user-attachments/assets/5505053b-fc27-48f6-8a66-62346d835515" />
+
+
 ## Features
 
 ### OSINT & Digital Footprint Analysis
