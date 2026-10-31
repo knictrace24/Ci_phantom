@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import "./App.css";
 
@@ -130,6 +131,10 @@ function CaseFile({ setRisk, setPage, setTarget }) {
     return Object.keys(newErrors).length === 0;
   }
 
+  // =========================
+  // BACKEND INVESTIGATION
+  // =========================
+
   async function handleInvestigation() {
     if (!validateForm()) {
       return;
@@ -138,8 +143,16 @@ function CaseFile({ setRisk, setPage, setTarget }) {
     setLoading(true);
 
     try {
+      const API_URL = import.meta.env.VITE_API_URL;
+
+      if (!API_URL) {
+        throw new Error(
+          "VITE_API_URL is not configured. Check frontend environment variables."
+        );
+      }
+
       const response = await fetch(
-  `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/investigate`,
+        `${API_URL.replace(/\/+$/, "")}/investigate`,
         {
           method: "POST",
           headers: {
@@ -150,24 +163,30 @@ function CaseFile({ setRisk, setPage, setTarget }) {
       );
 
       if (!response.ok) {
-        throw new Error("Backend returned an error");
+        const errorText = await response.text();
+
+        throw new Error(
+          `Backend error (${response.status}): ${errorText || response.statusText}`
+        );
       }
 
       const result = await response.json();
 
       console.log("Ciphantom result:", result);
 
-      // Keep the original input for the simulation page.
+      // Keep original input for simulation page.
       setTarget(formData);
       setRisk(result);
       setPage("report");
+
     } catch (error) {
       console.error("Investigation failed:", error);
 
       setErrors({
-        backend:
+        backend: error.message ||
           "Could not connect to Ciphantom backend."
       });
+
     } finally {
       setLoading(false);
     }
