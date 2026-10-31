@@ -13,8 +13,8 @@ People often leave behind fragments of information across public platforms. Indi
 Ciphantom demonstrates this exposure through a structured investigation workflow, helping users understand their digital footprint and take steps to protect their privacy.
 
 
+<img width="1173" height="840" alt="image" src="https://github.com/user-attachments/assets/66c1ba83-0749-4b09-a537-c5c2195ea69f" />
 
-<img width="1176" height="852" alt="image" src="https://github.com/user-attachments/assets/5505053b-fc27-48f6-8a66-62346d835515" />
 
 
 ## Features
